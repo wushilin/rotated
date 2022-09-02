@@ -1,6 +1,7 @@
 # rotated
-Pipe your standard out to this, and it will rotate for you.
-It support rotate by size with max backup index
+I swallow your stdout/stderr, and put them into the log files, and rotate for you.
+
+I can also add timestamp to your log lines.
 
 # Behavior
 1. Guaranteed size not exceeding the limit for each file. Unless limit is set to a number that is smaller than the longest line (256KiB).
