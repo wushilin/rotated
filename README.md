@@ -24,8 +24,9 @@ I can also add timestamp to your log lines.
 
 # Rotate to test.log and keep 10 backups, 
 # each file target size 10000KiB, 
-# and do not prepend timestamp for each line
-./my-program | rotated -out test.log -keep 10 -size 10,000KiB
+# and do not prepend timestamp for each line,
+# and enable io buffer (for high io cases only)
+./my-program | rotated -out test.log -keep 10 -buffered -size 10,000KiB
 ```
 
 The default keep is 20 (files).
