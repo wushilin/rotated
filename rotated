@@ -28,9 +28,11 @@ if($keep <= 0) {
 binmode STDIN;
 my $FH = undef; 
 
+my $bytes_written = -s $outfile;
 &openfile("$outfile");
 
-my $bytes_written = -s $outfile;
+# If the file is already too big, rotate it now.
+&check_rotate("");
 &pipe;
 
 sub openfile($) {

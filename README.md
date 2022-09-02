@@ -2,6 +2,15 @@
 Pipe your standard out to this, and it will rotate for you.
 It support rotate by size with max backup index
 
+# Behavior
+1. Guaranteed size not exceeding the limit for each file. Unless limit is set to a number that is smaller than the longest line.
+
+2. Lines exceeded 256KiB (262144 bytes) might be split into 2 files (readline is capped at 256KiB).
+
+3. File rotation is checked pre-write. If a write would have caused a file to exceed the size, it will be rotated before writing.
+
+4. When restarting and existing log file is found, it will be appended, unless it is exceeding the limit.
+
 # Usage - Just pipe your output to this rotated
 
 ```bash
