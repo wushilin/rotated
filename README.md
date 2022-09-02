@@ -126,9 +126,9 @@ If you enabled dated prefix, it will not work as you expect.
 
 
 ## Error behavior
-If the write fail, the program will exit. Common failure case is, disk full.
+If the write fail, the program will exit. Common failure case is disk full.
 
-When the program exit, typically your upstream program will quit too (due to SIGPIPE).
+When the program exits, typically your upstream program will quit too (due to SIGPIPE).
 
 You should test the behavior of your program in event of disk full.
 
@@ -145,7 +145,9 @@ You can start multiple program to do so. e.g. `cat >> /tmp/mypipe` in multiple t
 
 Your program will be paused until the `rotated` started to consume your output.
         
-### Step 3. Start your `rotated`. `rotated -d -out /tmp/test.log`
+### Step 3. Start your `rotated` and take stdin from `/tmp/mypipe`. 
+For example:
+`rotated -d -out /tmp/test.log </tmp/mypipe`
 
 `rotated` merges all program output to a single log file.
 
