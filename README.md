@@ -75,4 +75,12 @@ How many files to keep, excluding the current output file.
 
 File beyond this will be deleted.
 
+# Other notes
+This file operates at binary mode. So it is guaranteed no bytes is lost in translation.
 
+You can even use this as a split utility.
+
+The following command will split the big file to smaller chunks. 
+Earlier part will be written first.
+
+`cat huge-file | ./rotated -o small-file-prefix -s 100MiB -k 9999999`

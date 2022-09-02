@@ -25,7 +25,9 @@ if($keep <= 0) {
   die "-keep <files_to_keep> must be positive";
 }
 
+binmode STDIN;
 open FH, ">>$outfile" or die "Can't open $outfile for writing";
+binmode FH;
 my $last_check = time;
 my $bytes_written = -s $outfile;
 &pipe;
@@ -35,7 +37,7 @@ sub rotate_files {
   for(my $i = $keep - 1; $i > 0; $i--) {
     my $current_file = "$outfile.$i";
     my $next_file = "$outfile." . ($i + 1);
-    if(-f "$current_file") {
+    if(-e "$current_file") {
       rename($current_file, $next_file) or die "Rename failed $current_file -> $next_file";
     }
   }
@@ -46,6 +48,7 @@ sub check_rotate {
     close FH;
     &rotate_files;
     open FH, ">>$outfile" or die "Can't open $outfile for writing";
+    binmode FH;
     $bytes_written = 0;
   }
 }
