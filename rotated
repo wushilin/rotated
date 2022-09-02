@@ -12,24 +12,24 @@ my $keep = 20;
 my $dated = 0;
 my $buffered = 0;
 GetOptions(
-  "out=s" => \$outfile,
-  "size:s" => \$size,
-  "keep:i" => \$keep,
-  "dated" => \$dated,
-  "buffered" => \$buffered
-);
+		"out=s" => \$outfile,
+		"size:s" => \$size,
+		"keep:i" => \$keep,
+		"dated" => \$dated,
+		"buffered" => \$buffered
+		);
 
 if($outfile eq "") {
-  die "-out <outfile> is required";
+	die "-out <outfile> is required";
 }
 
 my $size_limit = &calc_size($size);
 if($size_limit <= 0) {
-  die "-size <bytes> must be positive!";
+	die "-size <bytes> must be positive!";
 }
 
 if($keep <= 0) {
-  die "-keep <files_to_keep> must be positive";
+	die "-keep <files_to_keep> must be positive";
 }
 
 
@@ -44,106 +44,106 @@ my $bytes_written = -s $outfile;
 &pipe;
 
 sub openfile($) {
-  my $file = shift;
-  if($FH) {
+	my $file = shift;
+	if($FH) {
 		close($FH);
-  }
+	}
 	open $FH, ">>$file" or die "Can't open $file for appending";
-  binmode $FH;
-  if(not $buffered) {
-    autoflush $FH;
-  }
+	binmode $FH;
+	if(not $buffered) {
+		autoflush $FH;
+	}
 }
 
 sub rotate_files {
-  my $count = 0;
-  for(my $i = $keep - 1; $i > 0; $i--) {
-    my $current_file = "$outfile.$i";
-    my $next_file = "$outfile." . ($i + 1);
-    if(-e "$current_file") {
-      rename($current_file, $next_file) or die "Rename failed $current_file -> $next_file";
-    }
-  }
-  rename($outfile, "$outfile.1") or die "Can't rename $outfile to $outfile.1";
-  &openfile("$outfile");
-  $bytes_written = 0;
+	my $count = 0;
+	for(my $i = $keep - 1; $i > 0; $i--) {
+		my $current_file = "$outfile.$i";
+		my $next_file = "$outfile." . ($i + 1);
+		if(-e "$current_file") {
+			rename($current_file, $next_file) or die "Rename failed $current_file -> $next_file";
+		}
+	}
+	rename($outfile, "$outfile.1") or die "Can't rename $outfile to $outfile.1";
+	&openfile("$outfile");
+	$bytes_written = 0;
 }
 sub check_rotate($) {
-  my $arg = shift;
-  my $arglength = length($arg);
-  if($bytes_written >= $size_limit) {
-    # Already exceeding, rotate now
-    &rotate_files;
-  } elsif($bytes_written + $arglength > $size_limit) { 
-		# This write will cause file to exceed
-    if($arglength > $size_limit) {
-      # A single write is already larger than limit, then write it anyway
+	my $arg = shift;
+	my $arglength = length($arg);
+	if($bytes_written >= $size_limit) {
+# Already exceeding, rotate now
+		&rotate_files;
+	} elsif($bytes_written + $arglength > $size_limit) { 
+# This write will cause file to exceed
+		if($arglength > $size_limit) {
+# A single write is already larger than limit, then write it anyway
 			return;
 		} else {
 			&rotate_files;
 		} 
-  }
+	}
 }
 
 sub pipe {
-  while(1) {
-    my $buffer = "";
-    my $nread = sysread STDIN, $buffer, $LINE_MAX;
-    if($nread == 0) {
-			# EOF, last!
+	while(1) {
+		my $buffer = "";
+		my $nread = sysread STDIN, $buffer, $LINE_MAX;
+		if($nread == 0) {
+# EOF, last!
 			last;
-    } 
-    open my $string_reader, '<', \$buffer;
-    binmode $string_reader;
-    while(<$string_reader>) {
-      my $line = $_;
-      if($dated) {
-        my $dt = scalar localtime(time);
-        $line = "[" . $dt . "] " . $line;
-      }
-      &check_rotate($line);
-      my $length = length($line);
-      print $FH $line or die $!;
-      $bytes_written = $bytes_written + $length;
+		} 
+		open my $string_reader, '<', \$buffer;
+		binmode $string_reader;
+		while(<$string_reader>) {
+			my $line = $_;
+			if($dated) {
+				my $dt = scalar localtime(time);
+				$line = "[" . $dt . "] " . $line;
+			}
+			&check_rotate($line);
+			my $length = length($line);
+			print $FH $line or die $!;
+			$bytes_written = $bytes_written + $length;
 		}
-    close my $string_reader;
-  }
-  close($FH);
+		close my $string_reader;
+	}
+	close($FH);
 }
 
 sub calc_size($) {
-  my $unit_lookup = {
-    "k" => 1000,
-    "K" => 1024,
-    "m" => 1000000,
-    "M" => 1048576,
-    "g" => 1000000000,
-    "G" => 1073741824,
-    "kB" => 1000,
-    "KB" => 1024,
-    "KiB" => 1024,
-    "mB" => 1000000,
-    "MB" => 1048576,
-    "MiB" => 1048576,
-    "gB" => 1000000000,
-    "GB" => 1073741824,
-    "GiB" => 1073741824
-  };
-  my $arg = shift;
-  if(not $arg =~ m/^([\d_,]+)(\D+)?$/) {
-    die "Not valid size: $arg. Expect a valid size notation e.g. '10K', '100000', '30g', '1,000,000', '4_000_000k'";
-  }
+	my $unit_lookup = {
+		"k" => 1000,
+		"K" => 1024,
+		"m" => 1000000,
+		"M" => 1048576,
+		"g" => 1000000000,
+		"G" => 1073741824,
+		"kB" => 1000,
+		"KB" => 1024,
+		"KiB" => 1024,
+		"mB" => 1000000,
+		"MB" => 1048576,
+		"MiB" => 1048576,
+		"gB" => 1000000000,
+		"GB" => 1073741824,
+		"GiB" => 1073741824
+	};
+	my $arg = shift;
+	if(not $arg =~ m/^([\d_,]+)(\D+)?$/) {
+		die "Not valid size: $arg. Expect a valid size notation e.g. '10K', '100000', '30g', '1,000,000', '4_000_000k'";
+	}
 
-  my $count = $1;
-  my $unit = $2;
-  $count =~ s/[_,]//g;
-  if(not $unit) {
-    return $count;
-  } else {
-    my $lookup = $unit_lookup->{$unit};
-    if(not $lookup) {
-      die "Invalid unit $unit. Only support " . join(",", keys(%$unit_lookup)) . "\n";
-    }
-    return $count * $lookup;
-  }
+	my $count = $1;
+	my $unit = $2;
+	$count =~ s/[_,]//g;
+	if(not $unit) {
+		return $count;
+	} else {
+		my $lookup = $unit_lookup->{$unit};
+		if(not $lookup) {
+			die "Invalid unit $unit. Only support " . join(",", keys(%$unit_lookup)) . "\n";
+		}
+		return $count * $lookup;
+	}
 }
