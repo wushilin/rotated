@@ -109,7 +109,7 @@ Enable the timestamp logging. Timestamp will prefix a line with a date like `[Fr
 ## Optional Enable Buffering. Default: No
 `-b | --buffered || -buffered`
 
-Enable buffering. May increase throughput, but you may not see you outlines immediately.
+Enable buffering. May increase throughput, but you may not see you output in files immediately.
 
 # Other notes
 This file operates at binary mode. So it is guaranteed no bytes is lost in translation.

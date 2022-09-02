@@ -52,7 +52,6 @@ sub openfile($) {
   binmode $FH;
   if(not $buffered) {
     autoflush $FH;
-  } else {
   }
 }
 
