@@ -54,15 +54,15 @@ sub check_rotate {
 }
 
 sub pipe {
-	while(1) {
+  while(1) {
     #FILEHANDLE,SCALAR,LENGTH
     my $buffer = <STDIN>;
     if(not defined $buffer) {
-			last;
-		}
+      last;
+    }
     &check_rotate;
     my $length = length($buffer);
-		print FH $buffer;
+    print FH $buffer;
     $bytes_written = $bytes_written + $length;
     &check_rotate;
   }
@@ -73,23 +73,23 @@ sub pipe {
 
 sub calc_size($) {
   my $unit_lookup = {
-  	"k" => 1000,
+    "k" => 1000,
     "K" => 1024,
-  	"m" => 1000000,
-  	"M" => 1048576,
-  	"g" => 1000000000,
-  	"G" => 1073741824,
+    "m" => 1000000,
+    "M" => 1048576,
+    "g" => 1000000000,
+    "G" => 1073741824,
     "kB" => 1000,
-  	"KB" => 1024,
-  	"KiB" => 1024,
-  	"mB" => 1000000,
-  	"MB" => 1048576,
-  	"MiB" => 1048576,
-  	"gB" => 1000000000,
+    "KB" => 1024,
+    "KiB" => 1024,
+    "mB" => 1000000,
+    "MB" => 1048576,
+    "MiB" => 1048576,
+    "gB" => 1000000000,
     "GB" => 1073741824,
     "GiB" => 1073741824
   };
-	my $arg = shift;
+  my $arg = shift;
   if(not $arg =~ m/^([\d_,]+)(\D+)?$/) {
     die "Not valid size: $arg. Expect a valid size notation e.g. '10K', '100000', '30g', '1,000,000', '4_000_000k'";
   }
@@ -98,12 +98,12 @@ sub calc_size($) {
   my $unit = $2;
   $count =~ s/[_,]//g;
   if(not $unit) {
-		return $count;
+    return $count;
   } else {
     my $lookup = $unit_lookup->{$unit};
-		if(not $lookup) {
-			die "Invalid unit $unit. Only support " . join(",", keys(%$unit_lookup)) . "\n";
-		}
+    if(not $lookup) {
+      die "Invalid unit $unit. Only support " . join(",", keys(%$unit_lookup)) . "\n";
+    }
     return $count * $lookup;
   }
 }
