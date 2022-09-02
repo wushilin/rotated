@@ -117,3 +117,12 @@ Earlier part will be written first.
 `cat huge-file | ./rotated -o small-file-prefix -s 100MiB -k 9999999`
 
 If you enabled dated prefix, it will not work as you expect.
+
+
+## Error behavior
+If the write fail, the program will exit. Common failure case is, disk full.
+
+When the program exit, typically your upstream program will quit too (due to SIGPIPE).
+
+You should test the behavior of your program in event of disk full.
+
