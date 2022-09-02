@@ -97,7 +97,7 @@ sub pipe {
       }
       &check_rotate($line);
       my $length = length($line);
-      print $FH $line;
+      print $FH $line or die "Unable to write to output. Disk might be full";
       $bytes_written = $bytes_written + $length;
 		}
     close my $string_reader;
