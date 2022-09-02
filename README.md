@@ -18,16 +18,22 @@ Logging `hello, world` => `[Fri Sep  2 13:44:03 2022] - hello, world`
 # Usage - Just pipe your output to this rotated
 
 ```bash
-# Rotate to test.log and keep 20 backups, each file target size 100MiB, and prepend timestamp for each line
+# Rotate to test.log and keep 20 backups, 
+# each file target size 100MiB, 
+# and do prepend timestamp for each line
 ./my-program | rotated -out test.log -keep 20 -size 100MiB -d
 
-# Rotate to test.log and keep 10 backups, each file target size 10000KiB, and do not prepend timestamp for each line
+# Rotate to test.log and keep 10 backups, 
+# each file target size 10000KiB, 
+# and do not prepend timestamp for each line
 ./my-program | rotated -out test.log -keep 10 -size 10,000KiB
 ```
 
 The default keep is 20 (files).
 
 The default size limit is 100MiB.
+
+The default flag for prepend timestamp is `No`
 
 You can override them with arguments
 
