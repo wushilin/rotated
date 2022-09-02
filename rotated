@@ -2,10 +2,14 @@
 
 use Getopt::Long;
 use bytes;
+
+my $LINE_MAX = 256*1024;
+
 my $outfile = "";
 my $size = "100M";
 my $keep = 20;
 my $dated = 0;
+
 GetOptions(
   "out=s" => \$outfile,
   "size:s" => \$size,
@@ -77,9 +81,8 @@ sub check_rotate($) {
 
 sub pipe {
   while(1) {
-    #FILEHANDLE,SCALAR,LENGTH
     my $buffer = "";
-    my $nread = read STDIN, $buffer, 16384;
+    my $nread = read STDIN, $buffer, $LINE_MAX;
     if($nread == 0) {
 			# EOF, last!
 			last;
@@ -101,8 +104,6 @@ sub pipe {
   }
   close($FH);
 }
-
-
 
 sub calc_size($) {
   my $unit_lookup = {
@@ -139,19 +140,4 @@ sub calc_size($) {
     }
     return $count * $lookup;
   }
-}
-
-sub fgets {
-    my($fh, $limit) = @_;
-
-    my($char, $str);
-    for(1..$limit) {
-        my $char = getc $fh;
-        print $char;
-        last unless defined $char;
-        $str .= $char;
-        last if $char eq "\n";
-    }
-
-    return $str;
 }
