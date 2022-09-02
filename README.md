@@ -44,7 +44,7 @@ You can override them with arguments
 
 Specify the output file. 
 
-Back file will named like `filename.1`, `filename.2`,..., up to `filename.<max-backups>`
+Backup file will named like `filename.1`, `filename.2`,..., up to `filename.<max-backups>`
 
 ## Optional file size limit. Default: 100MiB
 `-size expr || --size=expr || -s expr || --size expr`
@@ -95,9 +95,13 @@ NOTE: If a line is longer than 256KiB (262144 bytes), it may be split into 2 dif
 
 How many files to keep, excluding the current output file.
 
-File beyond this will be deleted.
+File beyond this will be untouched (if exists)
 
-## Optional Timestamp logging. Default: false || 0
+For example, you have test.log.25 and your max backup index is 24, 
+
+then test.log.25 will never be deleted by this program.
+
+## Optional Timestamp logging. Default: No
 `-d || --dated || -dated`
 
 Enable the timestamp logging. Timestamp will prefix a line with a date like `[Fri Sep  2 13:44:03 2022] `.
@@ -112,3 +116,5 @@ The following command will split the big file to smaller chunks.
 Earlier part will be written first.
 
 `cat huge-file | ./rotated -o small-file-prefix -s 100MiB -k 9999999`
+
+If you enabled dated prefix, it will not work as you expect.
