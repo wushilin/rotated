@@ -125,14 +125,14 @@ Earlier part will be written first.
 If you enabled dated prefix, it will not work as you expect.
 
 
-## Error behavior
+## `rotated` error behavior
 If the write fail, the program will exit. Common failure case is disk full.
 
 When the program exits, typically your upstream program will quit too (due to SIGPIPE).
 
 You should test the behavior of your program in event of disk full.
 
-## Using to collect logs from multiple output
+## Using `rotated` to collect logs from multiple output
 You can use fifo pipes to send multiple program's output. However, the program quits after the last program closes the stdout.
 
 ### Step 1. Create a pipe: `mkfifo /tmp/mypipe`
