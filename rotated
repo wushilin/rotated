@@ -31,7 +31,7 @@ if($keep <= 0) {
   die "-keep <files_to_keep> must be positive";
 }
 
-if not $buffered {
+if(not $buffered) {
   $| = 1;
 }
 
