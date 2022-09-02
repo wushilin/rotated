@@ -105,6 +105,11 @@ then test.log.25 will never be deleted by this program.
 
 Enable the timestamp logging. Timestamp will prefix a line with a date like `[Fri Sep  2 13:44:03 2022] `.
 
+## Optional Enable Buffering. Default: No
+`-b | --buffered || -buffered`
+
+Enable buffering. May increase throughput, but you may not see you outlines immediately.
+
 # Other notes
 This file operates at binary mode. So it is guaranteed no bytes is lost in translation.
 

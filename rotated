@@ -9,12 +9,13 @@ my $outfile = "";
 my $size = "100M";
 my $keep = 20;
 my $dated = 0;
-
+my $buffered = 0;
 GetOptions(
   "out=s" => \$outfile,
   "size:s" => \$size,
   "keep:i" => \$keep,
   "dated" => \$dated,
+  "buffered" => \$buffered
 );
 
 if($outfile eq "") {
@@ -28,6 +29,10 @@ if($size_limit <= 0) {
 
 if($keep <= 0) {
   die "-keep <files_to_keep> must be positive";
+}
+
+if not $buffered {
+  $| = 1;
 }
 
 binmode STDIN;
