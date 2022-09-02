@@ -12,9 +12,7 @@ I can also add timestamp to your log lines.
 
 4. When restarting and existing log file is found, it will be appended, however, if it is exceeding the limit, it will be rotated immediately.
 
-5. If you enabled dated (default false), it will add timestamp for you too. (-d || --dated)
-
-Logging `hello, world` => `[Fri Sep  2 13:44:03 2022] - hello, world`
+5. If you enabled dated (default false), it will add timestamp for you too. (Enable with `-d || --dated || -dated`). If enabled, logging `hello, world` will write `[Fri Sep  2 13:44:03 2022] hello, world` to output file.
 
 # Usage - Just pipe your output to this rotated
 
