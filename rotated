@@ -87,7 +87,7 @@ sub check_rotate($) {
 sub pipe {
   while(1) {
     my $buffer = "";
-    my $nread = read STDIN, $buffer, $LINE_MAX;
+    my $nread = sysread STDIN, $buffer, $LINE_MAX;
     if($nread == 0) {
 			# EOF, last!
 			last;
