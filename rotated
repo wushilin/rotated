@@ -31,11 +31,6 @@ if($keep <= 0) {
   die "-keep <files_to_keep> must be positive";
 }
 
-if(not $buffered) {
-  $| = 1;
-} else {
-  $| = 0;
-}
 
 binmode STDIN;
 my $FH = undef; 
@@ -54,6 +49,11 @@ sub openfile($) {
   }
 	open $FH, ">>$file" or die "Can't open $file for appending";
   binmode $FH;
+  if(not $buffered) {
+    $| = 1;
+  } else {
+    $| = 0;
+  }
 }
 
 sub rotate_files {
