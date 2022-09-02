@@ -132,3 +132,24 @@ When the program exit, typically your upstream program will quit too (due to SIG
 
 You should test the behavior of your program in event of disk full.
 
+## Using to collect logs from multiple output
+You can use fifo pipes to send multiple program's output. However, the program quits after the last program closes the stdout.
+
+### Step 1. Create a pipe: `mkfifo /tmp/mypipe`
+
+It can be created anywhere.
+
+### Step 2. Send your program to `/tmp/mypip`. 
+
+You can start multiple program to do so. e.g. `cat >> /tmp/mypipe` in multiple terminals.
+
+Your program will be paused until the `rotated` started to consume your output.
+        
+### Step 3. Start your `rotated`. `rotated -d -out /tmp/test.log`
+
+`rotated` merges all program output to a single log file.
+
+`rotated` stopps when last output-generating program exit. 
+
+Cancelling or killing `rotated` will force all running program to quit too - unless they trap the signal.
+
