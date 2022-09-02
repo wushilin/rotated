@@ -5,11 +5,12 @@ use bytes;
 my $outfile = "";
 my $size = "100M";
 my $keep = 20;
-
+my $dated = 0;
 GetOptions(
   "out=s" => \$outfile,
   "size:s" => \$size,
-  "keep:i" => \$keep
+  "keep:i" => \$keep,
+  "dated" => \$dated,
 );
 
 if($outfile eq "") {
@@ -87,6 +88,10 @@ sub pipe {
     binmode $string_reader;
     while(<$string_reader>) {
       my $line = $_;
+      if($dated) {
+        my $dt = scalar localtime(time);
+        $line = "[" . $dt . "] " . $line;
+      }
       &check_rotate($line);
       my $length = length($line);
       print $FH $line;

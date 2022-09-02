@@ -11,6 +11,10 @@ It support rotate by size with max backup index
 
 4. When restarting and existing log file is found, it will be appended, unless it is exceeding the limit.
 
+5. If you enabled dated (default false), it will add timestamp for you too. (-d || --dated)
+
+Logging `hello, world` => `[Fri Sep  2 13:44:03 2022] - hello, world`
+
 # Usage - Just pipe your output to this rotated
 
 ```bash
@@ -83,6 +87,10 @@ NOTE: If a line is longer than 256KiB (262144 bytes), it may be split into 2 dif
 How many files to keep, excluding the current output file.
 
 File beyond this will be deleted.
+
+## Optional Timestamp logging. Default: false || 0
+`-d || --dated || -dated`
+Enable the timestamp logging. Timestamp will prefix a line with a date like `[Fri Sep  2 13:44:03 2022] `.
 
 # Other notes
 This file operates at binary mode. So it is guaranteed no bytes is lost in translation.
