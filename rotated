@@ -26,11 +26,21 @@ if($keep <= 0) {
 }
 
 binmode STDIN;
-open FH, ">>$outfile" or die "Can't open $outfile for writing";
-binmode FH;
-my $last_check = time;
+my $FH = undef; 
+
+&openfile("$outfile");
+
 my $bytes_written = -s $outfile;
 &pipe;
+
+sub openfile($) {
+  my $file = shift;
+  if($FH) {
+		close($FH);
+  }
+	open $FH, ">>$file" or die "Can't open $file for appending";
+  binmode $FH;
+}
 
 sub rotate_files {
   my $count = 0;
@@ -42,31 +52,47 @@ sub rotate_files {
     }
   }
   rename($outfile, "$outfile.1") or die "Can't rename $outfile to $outfile.1";
+  &openfile("$outfile");
+  $bytes_written = 0;
 }
-sub check_rotate {
+sub check_rotate($) {
+  my $arg = shift;
+  my $arglength = length($arg);
   if($bytes_written >= $size_limit) {
-    close FH;
+    # Already exceeding, rotate now
     &rotate_files;
-    open FH, ">>$outfile" or die "Can't open $outfile for writing";
-    binmode FH;
-    $bytes_written = 0;
+  } elsif($bytes_written + $arglength > $size_limit) { 
+		# This write will cause file to exceed
+    if($arglength > $size_limit) {
+      # A single write is already larger than limit, then write it anyway
+			return;
+		} else {
+			&rotate_files;
+		} 
   }
 }
 
 sub pipe {
   while(1) {
     #FILEHANDLE,SCALAR,LENGTH
-    my $buffer = <STDIN>;
-    if(not defined $buffer) {
-      last;
-    }
-    &check_rotate;
-    my $length = length($buffer);
-    print FH $buffer;
-    $bytes_written = $bytes_written + $length;
-    &check_rotate;
+    my $buffer = "";
+    my $nread = read STDIN, $buffer, 16384;
+    if($nread == 0) {
+			# EOF, last!
+			last;
+    } 
+    open my $string_reader, '<', \$buffer;
+    binmode $string_reader;
+    while(<$string_reader>) {
+      my $line = $_;
+      &check_rotate($line);
+      my $length = length($line);
+      print $FH $line;
+      $bytes_written = $bytes_written + $length;
+		}
+    close my $string_reader;
   }
-  close FH;
+  close($FH);
 }
 
 

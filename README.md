@@ -62,11 +62,11 @@ Valid usage example:
 
 `-s 45M` (45 MiB 47185920 bytes)
 
+Actual size of the file is always smaller or equal to the size limit,
+unless the limit is smaller than 256KiB and a single line in logs exceeded this limit.
 
-File will only be rotated after its size exceeded this number.
 
-Actual file size may slightly exceed this number due to IO buffering.
-
+NOTE: If a line is longer than 256KiB (262144 bytes), it may be split into 2 different files.
 
 ## Optional Max backup index. Default: 20
 `-k <number> || --keep <number> || --keep=<number> || -keep <number>` 
