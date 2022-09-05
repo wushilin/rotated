@@ -86,28 +86,38 @@ sub check_rotate($) {
 }
 
 sub pipe {
-	while(1) {
-		my $buffer = "";
-		my $nread = sysread STDIN, $buffer, $LINE_MAX;
-		if($nread == 0) {
+	my $may_prepend_date = 1;
+	my $buffer = "";
+		while(1) {
+			my $nread = sysread STDIN, $buffer, $LINE_MAX;
+			if($nread == 0) {
 # EOF, last!
-			last;
-		} 
-		open my $string_reader, '<', \$buffer;
-		binmode $string_reader;
-		while(<$string_reader>) {
-			my $line = $_;
-			if($dated) {
-				my $dt = scalar localtime(time);
-				$line = "[" . $dt . "] " . $line;
+				last;
+			} 
+			open my $string_reader, '<', \$buffer;
+			binmode $string_reader;
+			while(<$string_reader>) {
+				my $line = $_;
+				my $chopped = $line;
+				$chopped =~ s/\n$//g;
+				$chopped =~ s/\r$//g;
+				my $line_ends_with_new_line = ($line ne $chopped);
+				if($dated) {
+					my $dt = scalar localtime(time);
+					if($may_prepend_date) {
+						$line = "[" . $dt . "] " . $line . "";
+					}
+				}
+				&check_rotate($line);
+				my $length = length($line);
+				print $FH $line or die $!;
+				$bytes_written = $bytes_written + $length;
+				$may_prepend_date = $line_ends_with_new_line;
+
 			}
-			&check_rotate($line);
-			my $length = length($line);
-			print $FH $line or die $!;
-			$bytes_written = $bytes_written + $length;
+			close my $string_reader;
+			$buffer = "";
 		}
-		close my $string_reader;
-	}
 	close($FH);
 }
 
@@ -133,7 +143,6 @@ sub calc_size($) {
 	if(not $arg =~ m/^([\d_,]+)(\D+)?$/) {
 		die "Not valid size: $arg. Expect a valid size notation e.g. '10K', '100000', '30g', '1,000,000', '4_000_000k'";
 	}
-
 	my $count = $1;
 	my $unit = $2;
 	$count =~ s/[_,]//g;
